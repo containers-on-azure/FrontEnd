@@ -7,7 +7,7 @@
 <div class="row">
     <div class="col-sm-6">
         <h2>Markets</h2>
-        <table>
+        <table class="table">
             <thead>
                 <tr>
                     <th>Index</th>
@@ -23,6 +23,30 @@
                         <td>@market.Value</td>
                         <td>@market.ChangeValue</td>
                         <td>@market.ChangePercentage %</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-sm-6">
+        <h2>Top Stocks</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Stock</th>
+                    <th>Last Sale</th>
+                    <th>Change</th>
+                    <th>Share Volume</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var stock in Model.HomePageContents.TopStocks)
+                {
+                    <tr>
+                        <td>@stock.Name (@stock.Symbol)</td>
+                        <td>@stock.LastSale</td>
+                        <td>@stock.ChangeValue / @stock.ChangePercentage %</td>
+                        <td>@stock.ShareVolume</td>
                     </tr>
                 }
             </tbody>
