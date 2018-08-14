@@ -1,0 +1,31 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="row">
+    <div class="col-sm-6">
+        <h2>Markets</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Index</th>
+                    <th>Value</th>
+                    <th>Change Net / %</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var market in Model.HomePageContents.Markets)
+                {
+                    <tr>
+                        <td>@market.Name</td>
+                        <td>@market.Value</td>
+                        <td>@market.ChangeValue</td>
+                        <td>@market.ChangePercentage %</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
