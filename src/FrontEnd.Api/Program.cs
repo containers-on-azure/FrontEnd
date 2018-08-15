@@ -17,8 +17,21 @@ namespace FrontEnd.Api
             CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        {
+            var builder = WebHost.CreateDefaultBuilder(args);
+            var inContainer = (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true");
+            if (!inContainer)
+            {                
+                builder.ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    var env = hostingContext.HostingEnvironment;
+                    config.AddJsonFile($"appsettings.{env.EnvironmentName}.NotInContainer.json", optional: true, reloadOnChange: true);
+                });
+            }
+                
+                    
+            return builder.UseStartup<Startup>();
+        }
     }
 }

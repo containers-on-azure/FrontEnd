@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  frontend.api:
+    image: ${DOCKER_REGISTRY}frontendapi
+    build:
+      context: .
+      dockerfile: src/FrontEnd.Api/Dockerfile
+
+  frontend.web:
+    image: ${DOCKER_REGISTRY}frontendweb
+    build:
+      context: .
+      dockerfile: src/FrontEnd.Web/Dockerfile
+    environment:
+      - FrontEndApi=http://frontend.api/
+
