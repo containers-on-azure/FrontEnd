@@ -31,7 +31,12 @@ namespace FrontEnd.Web
 
             services.AddHttpClient<IFrontEndApiClient, FrontEndApiClient>(client =>
             {
-                client.BaseAddress = new Uri(Configuration["FrontEndApi"]);
+                var frontEndApiUrl = Configuration["FrontEndApi"];
+                if (string.IsNullOrWhiteSpace(frontEndApiUrl))
+                {
+                    frontEndApiUrl = "http://frontend.api";
+                }
+                client.BaseAddress = new Uri(frontEndApiUrl);
             });
 
 

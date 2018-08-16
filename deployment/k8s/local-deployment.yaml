@@ -1,0 +1,70 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: frontend-api-deployment
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+        component: frontend-api
+    spec:
+      containers:
+      - name: frontend-api
+        image: fbeltrao/frontendapi:1.0
+        ports:
+        - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-web-deployment
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+        component: frontend-web
+    spec:
+      containers:
+      - name: frontend-web
+        image: fbeltrao/frontendweb:1.0
+        ports:
+        - containerPort: 80
+        env:
+        - name: FrontEndApi
+          value: "http://frontend.api"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-web
+  labels:
+    app: frontend
+    component: frontend-web
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    component: frontend-web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-api
+  labels:
+    app: frontend
+    component: frontend-api
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    component: frontend-api

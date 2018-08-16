@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,9 +11,13 @@ namespace FrontEnd.Web.Pages
     {
         public string Message { get; set; }
 
+        public IDictionary EnvironmentVariables => Environment.GetEnvironmentVariables();
+
         public void OnGet()
         {
             Message = "Your application description page.";
+
+            
         }
     }
 }

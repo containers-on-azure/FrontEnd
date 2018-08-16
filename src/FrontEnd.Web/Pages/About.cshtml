@@ -6,4 +6,22 @@
 <h2>@ViewData["Title"]</h2>
 <h3>@Model.Message</h3>
 
-<p>Use this area to provide additional information.</p>
+<p>Environment Variables</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Key</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (System.Collections.DictionaryEntry kv in Model.EnvironmentVariables)
+        {
+            <tr>
+                <td>@kv.Key</td>
+                <td>@kv.Value</td>
+            </tr>
+        }
+    </tbody>
+</table>
