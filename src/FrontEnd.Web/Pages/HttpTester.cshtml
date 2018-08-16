@@ -1,0 +1,56 @@
+﻿@page
+@model FrontEnd.Web.Pages.HttpTesterModel
+@{
+    ViewData["Title"] = "HttpTester";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h2>HttpTester</h2>
+<input type="text" placeholder="Enter URL for GET request" class="form-control" id="url" />
+<button id="btnGet" class="btn-default">GET</button>
+
+<h2>Response</h2>
+<p>Status: <span id="responseStatus"></span></p>
+<p>Content-Type: <span id="responseContentType"></span></p>
+<pre id="responseBody">
+
+</pre>
+
+<script type="text/javascript">
+    function setResponseResult(resultStatus, resultContentType, resultBody) {
+        document.getElementById('responseStatus').innerText = resultStatus ? resultStatus : '';
+        document.getElementById('responseContentType').innerText = resultContentType ? resultContentType : '';
+        document.getElementById('responseBody').innerText = resultBody ? resultBody : '';
+    }
+
+    function onResponseReturned(res) {
+        if (res.headers.get('Content-Type').toString().indexOf('application/json') !== -1) {
+            res.json().then(j => {
+                setResponseResult(res.status, res.headers.get('Content-Type').toString(), JSON.stringify(j));
+            });
+        } else {
+            res.text().then(t => {
+                setResponseResult(res.status, res.headers.get('Content-Type').toString(), t);
+            });
+        }
+    }
+    var btnGet = document.getElementById("btnGet");    
+    btnGet.addEventListener('click', function () {
+        setResponseResult();
+        var url = document.getElementById('url').value;
+        fetch("/HttpTester?handler=RetrieveContent", {
+            method: 'post',
+            headers: {
+                'RequestVerificationToken': '@Model.XsrfToken',
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ url: url })
+        })
+            .then(onResponseReturned)
+            .catch(function () { });
+    });
+
+
+</script>
+

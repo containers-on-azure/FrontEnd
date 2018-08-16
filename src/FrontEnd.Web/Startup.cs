@@ -34,7 +34,7 @@ namespace FrontEnd.Web
                 var frontEndApiUrl = Configuration["FrontEndApi"];
                 if (string.IsNullOrWhiteSpace(frontEndApiUrl))
                 {
-                    frontEndApiUrl = "http://frontend.api";
+                    frontEndApiUrl = "http://frontend-api/";
                 }
                 client.BaseAddress = new Uri(frontEndApiUrl);
             });
