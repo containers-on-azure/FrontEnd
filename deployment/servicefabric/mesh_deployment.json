@@ -1,0 +1,130 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "defaultValue": "eastus",
+      "type": "string",
+      "metadata": {
+        "description": "Location of the resources."
+      }
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-07-01-preview",
+      "name": "FrontEndAppNetwork",
+      "type": "Microsoft.ServiceFabricMesh/networks",
+      "location": "[parameters('location')]",
+      "dependsOn": [],
+      "properties": {
+        "description": "FrontEnd App Network",
+        "addressPrefix": "10.0.0.4/22",
+        "ingressConfig": {
+          "layer4": [
+            {
+              "name": "webIngress",
+              "publicPort": "80",
+              "applicationName": "FrontEndApp",
+              "serviceName": "web",
+              "endpointName": "webListener"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "apiVersion": "2018-07-01-preview",
+      "name": "FrontEndApp",
+      "type": "Microsoft.ServiceFabricMesh/applications",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "Microsoft.ServiceFabricMesh/networks/FrontendAppNetwork"
+      ],
+      "properties": {
+        "description": "FrontEnd Application",
+        "services": [
+          {
+            "type": "Microsoft.ServiceFabricMesh/services",
+            "location": "[parameters('location')]",
+            "name": "api",
+            "properties": {
+              "description": "FrontEnd API Service",
+              "osType": "linux",
+              "codePackages": [
+                {
+                  "name": "api",
+                  "image": "fbeltrao/frontendapi:1.0",
+                  "endpoints": [
+                    {
+                      "name": "apiListener",
+                      "port": "8080"
+                    }
+                  ],
+                  "environmentVariables": [
+                    {
+                      "name": "ASPNETCORE_URLS",
+                      "value": "http://+:8080"
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": "1",
+                      "memoryInGB": "1"
+                    }
+                  }
+                }
+              ],
+              "replicaCount": "1",
+              "networkRefs": [
+                {
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'FrontEndAppNetwork')]"
+                }
+              ]
+            }
+          },
+
+          {
+            "type": "Microsoft.ServiceFabricMesh/services",
+            "location": "[parameters('location')]",
+            "name": "web",
+            "properties": {
+              "description": "FrontEnd Web Service",
+              "osType": "linux",
+              "codePackages": [
+                {
+                  "name": "web",
+                  "image": "fbeltrao/frontendweb:1.0",
+                  "endpoints": [
+                    {
+                      "name": "webListener",
+                      "port": "80"
+                    }
+                  ],
+                  "environmentVariables": [
+                    {
+                      "name": "FrontEndApi",
+                      "value": "http://api:8080"
+                    }
+                  ],
+                  "resources": {
+                    "requests": {
+                      "cpu": "1",
+                      "memoryInGB": "1"
+                    }
+                  }
+                }
+              ],
+              "replicaCount": "1",
+              "networkRefs": [
+                {
+                  "name": "[resourceId('Microsoft.ServiceFabricMesh/networks', 'FrontEndAppNetwork')]"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
