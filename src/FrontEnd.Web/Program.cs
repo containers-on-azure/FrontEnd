@@ -20,7 +20,13 @@ namespace FrontEnd.Web
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             var builder = WebHost.CreateDefaultBuilder(args);
-            var inContainer = (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true");
+
+            // need to check both environment variables for now
+            // https://github.com/dotnet/dotnet-docker/issues/677
+            var inContainer = 
+                (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true") ||
+                (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINERS") == "true");
+
             if (!inContainer)
             {
                 builder.ConfigureAppConfiguration((hostingContext, config) =>
@@ -29,7 +35,6 @@ namespace FrontEnd.Web
                     config.AddJsonFile($"appsettings.{env.EnvironmentName}.NotInContainer.json", optional: true, reloadOnChange: true);
                 });
             }
-
 
             return builder.UseStartup<Startup>();
         }

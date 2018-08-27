@@ -1,0 +1,14 @@
+## Network definition ##
+network:
+  schemaVersion: 1.0.0-preview1
+  name: FrontEndApplicationNetwork
+  properties:
+    description: FrontEndApplicationNetwork description.
+    addressPrefix: 10.0.0.4/22
+    ingressConfig:
+      layer4:
+		- name: webIngress
+		  publicPort: 20006
+		  applicationName: FrontEndApplication
+		  serviceName: FrontEndWebService
+		  endpointName: FrontEndWebListener

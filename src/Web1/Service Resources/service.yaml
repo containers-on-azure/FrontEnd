@@ -1,0 +1,28 @@
+﻿## Service definition ##
+application:
+  schemaVersion: 1.0.0-preview1
+  name: FrontEndApplication
+  properties:
+    services:
+      - name: Web1
+        properties:
+          description: Web1 description.
+          osType: Windows
+          codePackages:
+            - name: Web1
+              image: web1:dev
+              endpoints:
+                - name: Web1Listener
+                  port: 20005
+              environmentVariables:
+                - name: ASPNETCORE_URLS
+                  value: http://+:20005
+#                - name: ApplicationInsights:InstrumentationKey
+#                  value: "<Place AppInsights key here, or reference it via a secret>"
+              resources:
+                requests:
+                  cpu: 0.5
+                  memoryInGB: 1
+          replicaCount: 1
+          networkRefs:
+            - name: FrontEndApplicationNetwork

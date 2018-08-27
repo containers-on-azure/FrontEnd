@@ -1,0 +1,28 @@
+﻿## Service definition ##
+application:
+  schemaVersion: 1.0.0-preview1
+  name: FrontEndApplication
+  properties:
+    services:
+      - name: FrontEndWebService
+        properties:
+          description: Web FrontEnd
+          osType: Windows
+          codePackages:
+            - name: FrontEndWebService
+              image: frontendweb:dev
+              endpoints:
+                - name: FrontEndWebListener
+                  port: 20006
+              environmentVariables:
+                - name: ASPNETCORE_URLS
+                  value: http://+:20006
+                - name: FrontEndApi
+                  value: "http://FrontEndApiService:20008"
+              resources:
+                requests:
+                  cpu: 0.5
+                  memoryInGB: 1
+          replicaCount: 1
+          networkRefs:
+            - name: FrontEndApplicationNetwork
