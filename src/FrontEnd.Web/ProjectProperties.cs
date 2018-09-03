@@ -14,9 +14,7 @@ namespace FrontEnd.Web
 
         static ProjectProperties()
         {
-            BuildId = "#{Build.BuildId}#";
-            if ("#{Build.BuildId}#".Equals(BuildId))
-                BuildId = "0";
+            BuildId = "#{Build.BuildId}#";            
         }
     }
 }
