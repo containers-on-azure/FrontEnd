@@ -58,7 +58,6 @@ metadata:
     app: frontend
     component: frontend-web
 spec:
-  type: ClusterIP
   ports:
   - port: 80
     protocol: TCP
