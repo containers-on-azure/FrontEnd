@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: frontend-api
-        image: fbeltrao.azurecr.io/frontendapi:#{Build.BuildId}#
+        image: #{DOCKER_REGISTRY}#/frontendapi:#{Build.BuildId}#
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -44,7 +44,7 @@ spec:
     spec:
       containers:
       - name: frontend-web
-        image: fbeltrao.azurecr.io/frontendweb:#{Build.BuildId}#
+        image: #{DOCKER_REGISTRY}#/frontendweb:#{Build.BuildId}#
         imagePullPolicy: Always
         ports:
         - containerPort: 80
