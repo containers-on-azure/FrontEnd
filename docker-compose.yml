@@ -1,6 +1,7 @@
 version: '3.4'
 
 services:
+
   frontend-api:
     image: ${DOCKER_REGISTRY}frontendapi
     build:
@@ -14,3 +15,10 @@ services:
       dockerfile: src/FrontEnd.Web/Dockerfile
     depends_on:
       - frontend-api
+      - stock-api
+
+  #external resource from Stock team
+  stock-api:
+    image: fbeltrao.azurecr.io/stockapi:64
+    ports:
+      - "2000:80"

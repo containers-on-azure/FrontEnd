@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FrontEnd.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +27,17 @@ namespace FrontEnd.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+
+            services.AddHttpClient<IStockApiClient, StockApiClient>(client =>
+            {
+                var stockApiUrl = Configuration["StockApi"];
+                if (string.IsNullOrWhiteSpace(stockApiUrl))
+                {
+                    stockApiUrl = "http://stock-api/";
+                }
+                client.BaseAddress = new Uri(stockApiUrl);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

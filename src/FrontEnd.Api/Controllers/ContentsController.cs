@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FrontEnd.Api.Services;
 using FrontEnd.Shared.V1.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,16 @@ namespace FrontEnd.Api.Controllers
     [ApiController]
     public class ContentsController : ControllerBase
     {
+        private readonly IStockApiClient stockApiClient;
+
+        public ContentsController(IStockApiClient stockApiClient)
+        {
+            this.stockApiClient = stockApiClient;
+        }
+
         [HttpGet]
         [Route("")]
-        public ActionResult<HomePageViewModel> GetHomePage()
+        public async Task<ActionResult<HomePageViewModel>> GetHomePage()
         {
             // Based on data from https://www.nasdaq.com/ on 2018-08-14
             var content = new HomePageViewModel
@@ -23,19 +31,27 @@ namespace FrontEnd.Api.Controllers
                 {
                     new MarketOverviewViewModel{ Name = "NASDAQ", Value = 7819.71, ChangeValue = -19.4, ChangePercentage = -0.25 },
                     new MarketOverviewViewModel{ Name = "S&P 500", Value = 2821.93, ChangeValue = -11.35, ChangePercentage = -0.40 },
-                },
-
-                TopStocks = new StockViewModel[]
-                {
-                    new StockViewModel { Symbol = "aapl", Name = "Apple Inc.", LastSale = 208.87m, ChangeValue = 1.34m, ChangePercentage = .65, ShareVolume = 25180005 },
-                    new StockViewModel { Symbol = "qqq", Name = "Invesco QQQ Trust", LastSale = 180.32m, ChangeValue = -.20m, ChangePercentage = -.11, ShareVolume = 23852259},
-                    new StockViewModel { Symbol = "mu", Name = "Micron Technology", LastSale = 51.34m, ChangeValue = -.03m, ChangePercentage = -.06, ShareVolume = 23030109 },
-                    new StockViewModel { Symbol = "msft", Name = "Microsoft Corporation", LastSale = 108.21m, ChangeValue = -.79m, ChangePercentage = -.72, ShareVolume = 17892142 },
-                    new StockViewModel { Symbol = "csco", Name = "Cisco Systems", LastSale = 43.75m, ChangeValue = -.03m, ChangePercentage = -.07, ShareVolume = 17546299 },
-                }
+                },                
             };
+
+            var tasks = new Task<StockViewModel>[]
+            {
+                LoadStockSymbol("aapl"),
+                LoadStockSymbol("qqq"),
+                LoadStockSymbol("mu"),
+                LoadStockSymbol("msft"),
+                LoadStockSymbol("csco"),
+            };
+
+            await Task.WhenAll(tasks);
+            content.TopStocks = tasks
+                .Where(t => t.Result != null)
+                .Select(t => t.Result)
+                .ToList();
 
             return content;
         }
+
+        private async Task<StockViewModel> LoadStockSymbol(string symbol) => await this.stockApiClient.GetStock(symbol);
     }
 }
