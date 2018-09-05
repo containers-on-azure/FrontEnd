@@ -49,6 +49,8 @@ namespace FrontEnd.Api.Controllers
                 .Select(t => t.Result)
                 .ToList();
 
+            content.Source = this.stockApiClient.GetSourceName();
+
             return content;
         }
 

@@ -21,6 +21,8 @@ namespace FrontEnd.Api.Services
             this.logger = logger;
         }
 
+        public string GetSourceName() => this.httpClient.BaseAddress.ToString();
+
         public async Task<StockViewModel> GetStock(string symbol)
         {
             string apiPath = $"/api/v1/stocks/{symbol}";
@@ -36,6 +38,7 @@ namespace FrontEnd.Api.Services
                         using (var jsonReader = new JsonTextReader(reader))
                         {
                             var result = new JsonSerializer().Deserialize<StockViewModel>(jsonReader);
+
                             return result;
                         }
                     }

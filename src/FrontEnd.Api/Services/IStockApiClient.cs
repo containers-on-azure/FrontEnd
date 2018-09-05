@@ -9,5 +9,6 @@ namespace FrontEnd.Api.Services
     public interface IStockApiClient
     {
         Task<StockViewModel> GetStock(string symbol);
+        string GetSourceName();
     }
 }

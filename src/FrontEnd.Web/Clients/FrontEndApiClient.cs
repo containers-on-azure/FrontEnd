@@ -33,7 +33,7 @@ namespace FrontEnd.Web.Clients
                         using (var jsonReader = new JsonTextReader(reader))
                         {
                             var result = new JsonSerializer().Deserialize<HomePageViewModel>(jsonReader);
-                            result.Source = sourceUrl;
+                            result.Source = string.Join(',', sourceUrl, result.Source ?? string.Empty);
                             return result;
                         }
                     }
